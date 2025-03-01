@@ -1,0 +1,23 @@
+export const listingSearchableFields = ['title', 'category'];
+export const bangladeshiCities = [
+  'Dhaka',
+  'Chittagong',
+  'Khulna',
+  'Rajshahi',
+  'Sylhet',
+  'Barisal',
+  'Rangpur',
+  'Mymensingh',
+  'Narayanganj',
+  'Comilla',
+  'Bogra',
+  'Rajbari',
+  'Pabna',
+  'Jessore',
+  "Cox's Bazar",
+  'Tangail',
+  'Gazipur',
+  'Narsingdi',
+  'Faridpur',
+  'Manikganj',
+];

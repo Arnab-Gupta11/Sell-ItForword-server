@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Document, Model } from 'mongoose';
+import { USER_ROLE } from './user.constant';
 
 // User Schema Definition
 export interface IUser extends Document {
@@ -24,3 +25,5 @@ export interface UserModel extends Model<IUser> {
   isUserExistsByEmail(id: string): Promise<IUser>;
   checkUserExist(userId: string): Promise<IUser>;
 }
+
+export type TUserRole = keyof typeof USER_ROLE;
