@@ -1,23 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { Document, Model } from 'mongoose';
-
-// Enum for User Roles
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-}
 
 // User Schema Definition
 export interface IUser extends Document {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   image: string;
-  role: UserRole;
+  role: 'user' | 'admin';
   isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
-
+export interface userDataPayload extends IUser {
+  confirmedPassword: string;
+}
 export interface UserModel extends Model<IUser> {
   //instance methods for checking if passwords are matched
   isPasswordMatched(

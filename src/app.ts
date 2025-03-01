@@ -24,7 +24,7 @@ app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {
   res.json({
     status: true,
-    message: 'Stationery Shop Server Live ⚡',
+    message: 'Sell-It-Forword Server Live ⚡',
   });
 });
 
