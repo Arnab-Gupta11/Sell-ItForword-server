@@ -1,0 +1,23 @@
+import { Router } from 'express';
+// import { AuthRoutes } from '../modules/auth/auth.routes';
+// import { OrderRoutes } from '../modules/order/order.routes';
+// import { ProductRoutes } from '../modules/product/product.routes';
+// import { UserRoutes } from '../modules/user/user.routes';
+// import { ReviewRoute } from '../modules/review/review.routes';
+// import { FavouriteRoutes } from '../modules/fovourite/favourite.routes';
+
+const router = Router();
+
+// const moduleRoutes = [
+//   {
+//     path: '/auth',
+//     route: AuthRoutes,
+//   },
+//   {
+//     path: '/user',
+//     route: UserRoutes,
+//   },
+// ];
+
+// moduleRoutes.forEach((route) => router.use(route.path, route.route));
+export default router;
