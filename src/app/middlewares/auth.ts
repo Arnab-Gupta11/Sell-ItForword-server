@@ -9,7 +9,7 @@ import User from '../modules/user/user.model';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.headers.authorization;
 
     // checking if the token is missing
     if (!token) {
@@ -21,10 +21,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
       token,
       config.jwt_access_secret as string,
     ) as JwtPayload;
-    const { role, userEmail } = decoded;
+    const { role, email } = decoded;
 
     // checking if the user is exist
-    const user = await User.isUserExistsByEmail(userEmail);
+    const user = await User.isUserExistsByEmail(email);
 
     if (!user) {
       throw new AppError(404, 'This user is not found !');

@@ -10,7 +10,7 @@ const listingSchema = new Schema<IListing>(
     condition: { type: String, enum: ['new', 'used'], required: true },
     images: { type: [String], required: true },
     category: { type: String, required: true },
-    userID: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
     status: { type: String, enum: ['available', 'sold'], default: 'available' },
     address: { type: String, required: true },
     city: { type: String, required: true },

@@ -10,8 +10,9 @@ const createListingIntoDB = async (
   listingData: Partial<IListing>,
   user: IUser,
 ) => {
-  const newListing = new Listing({ ...listingData, userId: user._id });
-  const result = await newListing.save();
+  const newListingData = { ...listingData, userId: user._id };
+
+  const result = await Listing.create(newListingData);
   return result;
 };
 //Get all product from database.
@@ -65,6 +66,31 @@ const getAllListingOfAUserFromDB = async (
     result,
   };
 };
+const getAllListingByCategory = async (
+  category: string,
+  query: Record<string, unknown>,
+) => {
+  const maxPriceData = await Listing.findOne()
+    .sort({ price: -1 })
+    .select('price')
+    .exec();
+  const maxListingPrice = maxPriceData?.price || 0;
+  const listingQuery = new QueryBuilder(Listing.find({ category }), query)
+    .search(listingSearchableFields)
+    .filter()
+    .filterByPrice(maxListingPrice)
+    .sort()
+    .sortOrder()
+    .paginate();
+
+  const result = await listingQuery.modelQuery;
+  const meta = await listingQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
 //Get single product from database.
 const getSingleListingFromDB = async (id: string) => {
   const result = await Listing.findById(id).populate('userID');
@@ -94,16 +120,6 @@ const deleteListingFromDB = async (id: string, user: IUser) => {
   const result = await Listing.findByIdAndDelete(id);
   return result;
 };
-// const getMaximumPriceFromDB = async () => {
-//   // Find the product with the highest price by sorting in descending order
-//   const product = await Product.findOne()
-//     .sort({ price: -1 })
-//     .select('price')
-//     .lean();
-
-//   // Return the price if a product is found, otherwise null
-//   return product?.price || null;
-// };
 
 const markAsSoldIntoDB = async (id: string, user: IUser) => {
   const listing = await Listing.findById(id);
@@ -111,7 +127,7 @@ const markAsSoldIntoDB = async (id: string, user: IUser) => {
   if (!listing) {
     throw new AppError(404, 'Listing not found');
   }
-  if (listing.userID.toString() !== user?._id)
+  if (listing.userId.toString() !== user?._id)
     throw new AppError(403, 'You are not authorized to update status');
 
   listing.status = 'sold';
@@ -126,4 +142,5 @@ export const listingServices = {
   deleteListingFromDB,
   getSingleListingFromDB,
   markAsSoldIntoDB,
+  getAllListingByCategory,
 };

@@ -48,6 +48,24 @@ const getAllListings = catchAsync(async (req: Request, res: Response) => {
     });
   }
 });
+const getAllListingsByCategory = catchAsync(
+  async (req: Request, res: Response) => {
+    const { category } = req.params;
+    const result = await listingServices.getAllListingByCategory(
+      category,
+      req.query,
+    );
+    if (result) {
+      sendResponse(res, {
+        success: true,
+        message: responseMessages.LISTING_GET_ALL,
+        statusCode: 200,
+        meta: result.meta,
+        data: result.result,
+      });
+    }
+  },
+);
 //get all listing of a individual user.
 const getAllListingsOfAUser = catchAsync(
   async (req: Request, res: Response) => {
@@ -115,4 +133,5 @@ export const listingControllers = {
   getSingleListinng,
   deleteListing,
   markAsSold,
+  getAllListingsByCategory,
 };
