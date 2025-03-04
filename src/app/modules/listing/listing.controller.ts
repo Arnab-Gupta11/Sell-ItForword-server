@@ -69,9 +69,10 @@ const getAllListingsByCategory = catchAsync(
 //get all listing of a individual user.
 const getAllListingsOfAUser = catchAsync(
   async (req: Request, res: Response) => {
+    const { id } = req.params;
     const result = await listingServices.getAllListingOfAUserFromDB(
       req.query,
-      req.user,
+      id,
     );
     if (result) {
       sendResponse(res, {
@@ -84,20 +85,20 @@ const getAllListingsOfAUser = catchAsync(
     }
   },
 );
-//update product.
-// const updateProduct = catchAsync(async (req: Request, res: Response) => {
-//   const updates = req.body;
-//   const { productId } = req.params;
-//   const result = await listingServices.up(productId, updates);
-//   if (result) {
-//     sendResponse(res, {
-//       success: true,
-//       message: 'Product is updated successfully',
-//       statusCode: 201,
-//       data: result,
-//     });
-//   }
-// });
+//update listing.
+const updateListing = catchAsync(async (req: Request, res: Response) => {
+  const updates = req.body;
+  const { listingId } = req.params;
+  const result = await listingServices.updateListingIntoDB(listingId, updates);
+  if (result) {
+    sendResponse(res, {
+      success: true,
+      message: responseMessages.LISTING_UPDATE,
+      statusCode: 200,
+      data: result,
+    });
+  }
+});
 //delete product.
 const deleteListing = catchAsync(async (req: Request, res: Response) => {
   const { listingId } = req.params;
@@ -134,4 +135,5 @@ export const listingControllers = {
   deleteListing,
   markAsSold,
   getAllListingsByCategory,
+  updateListing
 };

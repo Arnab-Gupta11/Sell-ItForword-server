@@ -5,7 +5,7 @@ export interface IListing extends Document {
   description: string;
   price: number;
   condition: 'new' | 'used';
-  images: string[];
+  image: string;
   category: string;
   userId: Schema.Types.ObjectId;
   status: 'available' | 'sold';

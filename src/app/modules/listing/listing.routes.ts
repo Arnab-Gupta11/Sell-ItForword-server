@@ -18,7 +18,8 @@ router.get(
   '/categories/:category',
   listingControllers.getAllListingsByCategory,
 );
-router.get('/user', auth('user'), listingControllers.getAllListingsOfAUser);
+router.get('/user/:id', auth('user'), listingControllers.getAllListingsOfAUser);
 router.delete('/:listingId', auth('user'), listingControllers.deleteListing);
+router.put('/:listingId', auth('user'), listingControllers.updateListing);
 
 export const ListingRoutes = router;

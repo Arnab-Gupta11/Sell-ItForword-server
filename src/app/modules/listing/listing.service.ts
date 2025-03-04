@@ -40,17 +40,14 @@ const getAllListingFromDB = async (query: Record<string, unknown>) => {
 };
 const getAllListingOfAUserFromDB = async (
   query: Record<string, unknown>,
-  user: IUser,
+  id: string,
 ) => {
   const maxPriceData = await Listing.findOne()
     .sort({ price: -1 })
     .select('price')
     .exec();
   const maxListingPrice = maxPriceData?.price || 0;
-  const listingQuery = new QueryBuilder(
-    Listing.find({ userId: user._id }),
-    query,
-  )
+  const listingQuery = new QueryBuilder(Listing.find({ userId: id }), query)
     .search(listingSearchableFields)
     .filter()
     .filterByPrice(maxListingPrice)
@@ -93,22 +90,22 @@ const getAllListingByCategory = async (
 };
 //Get single product from database.
 const getSingleListingFromDB = async (id: string) => {
-  const result = await Listing.findById(id).populate('userID');
+  const result = await Listing.findById(id).populate('userId');
   if (!result) {
     throw new AppError(404, 'Listing Item not found');
   }
   return result;
 };
-//Update product into database.
-// const updateProductIntoDB = async (id: string, updates: object) => {
-//   const result = await Listing.findByIdAndUpdate(
-//     id,
-//     { ...updates },
-//     { new: true, runValidators: true },
-//   );
-//   return result;
-// };
-//Delete product from database.
+//Update listing into database.
+const updateListingIntoDB = async (id: string, updates: object) => {
+  const result = await Listing.findByIdAndUpdate(
+    id,
+    { ...updates },
+    { new: true, runValidators: true },
+  );
+  return result;
+};
+//Delete listing from database.
 const deleteListingFromDB = async (id: string, user: IUser) => {
   const listing = await Listing.findOne({
     userId: user._id,
@@ -143,4 +140,5 @@ export const listingServices = {
   getSingleListingFromDB,
   markAsSoldIntoDB,
   getAllListingByCategory,
+  updateListingIntoDB,
 };

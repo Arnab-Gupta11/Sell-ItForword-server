@@ -7,7 +7,7 @@ import cors from 'cors';
 const app: Application = express();
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://notefy-six.vercel.app'], // Allow only your production domain
+  origin: ['http://localhost:3000', 'https://notefy-six.vercel.app'], // Allow only your production domain
   credentials: true, // Allow cookies to be sent
 };
 
