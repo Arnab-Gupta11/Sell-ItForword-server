@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { Document, Model } from 'mongoose';
+import { Document, Model, ObjectId } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
 // User Schema Definition
 export interface IUser extends Document {
+  _id: ObjectId;
   fullName: string;
   email: string;
   password: string;

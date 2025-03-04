@@ -11,6 +11,8 @@ export const config = {
   jwt_access_secret: process.env.JWT_ACCESS_SECRET,
   jwt_refresh_secret: process.env.JWT_ACCESS_SECRET,
   jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  frontend_url:process.env.FRONTEND_URL,
   sp: {
     sp_endpoint: process.env.SP_ENDPOINT,
     sp_username: process.env.SP_USERNAME,
