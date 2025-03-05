@@ -11,6 +11,9 @@ export interface IUser extends Document {
   image: string;
   role: 'user' | 'admin';
   isBlocked: boolean;
+  phone?: string;
+  address?: string;
+  city?: string;
   createdAt: Date;
   updatedAt: Date;
 }

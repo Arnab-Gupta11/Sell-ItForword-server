@@ -26,16 +26,15 @@ const getAllUser = catchAsync(async (req, res) => {
   });
 });
 
-// const myProfile = catchAsync(async (req, res) => {
-//   const result = await UserServices.myProfile(req.user as IJwtPayload);
-
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: 'Profile retrieved successfully',
-//     data: result,
-//   });
-// });
+const myProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getUserById(req.params.id, req.user);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Fetch User details successfully',
+    data: result,
+  });
+});
 
 // const updateProfile = catchAsync(async (req, res) => {
 //   const result = await UserServices.updateProfile(
@@ -67,6 +66,7 @@ const getAllUser = catchAsync(async (req, res) => {
 export const UserController = {
   registerUser,
   getAllUser,
+  myProfile,
   // myProfile,
   // updateUserStatus,
   // updateProfile,

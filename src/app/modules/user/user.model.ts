@@ -35,6 +35,12 @@ const userSchema = new Schema<IUser, UserModel>(
       type: Boolean,
       default: false,
     },
+    phone: {
+      type: String,
+      default: '',
+    },
+    address: { type: String, default: '' },
+    city: { type: String, default: '' },
   },
   {
     timestamps: true,

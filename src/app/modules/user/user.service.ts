@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { userDataPayload } from './user.interface';
+import { IUser, userDataPayload } from './user.interface';
 import User from './user.model';
 import AppError from '../../errors/AppError';
 import QueryBuilder from '../../builder/QueryBuilder';
@@ -75,6 +75,17 @@ const getAllUser = async (query: Record<string, unknown>) => {
   };
 };
 
+const getUserById = async (userId: string, loginUser: IUser) => {
+  const user = await User.findById(userId).select('-password');
+  if (loginUser.email !== user?.email) {
+    throw new AppError(403, 'You are not authorized to access.');
+  }
+  if (!user) {
+    throw new Error('User not found');
+  }
+  return user;
+};
+
 // const myProfile = async (authUser: IJwtPayload) => {
 //   const isUserExists = await User.findById(authUser.userId);
 //   if (!isUserExists) {
@@ -137,6 +148,7 @@ const getAllUser = async (query: Record<string, unknown>) => {
 export const UserServices = {
   registerUser,
   getAllUser,
+  getUserById,
   // myProfile,
   // updateUserStatus,
   // updateProfile,
