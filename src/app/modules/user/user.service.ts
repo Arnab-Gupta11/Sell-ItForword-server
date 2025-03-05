@@ -86,70 +86,29 @@ const getUserById = async (userId: string, loginUser: IUser) => {
   return user;
 };
 
-// const myProfile = async (authUser: IJwtPayload) => {
-//   const isUserExists = await User.findById(authUser.userId);
-//   if (!isUserExists) {
-//     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
-//   }
-//   if (!isUserExists.isActive) {
-//     throw new AppError(StatusCodes.BAD_REQUEST, 'User is not active!');
-//   }
+const updateUserProfileIntoDB = async (
+  userId: string,
+  updateData: Partial<IUser>,
+  loginUser: IUser,
+) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  if (loginUser.role === 'user' && loginUser.email !== user.email) {
+    throw new AppError(400, 'You are not authorized To update this profile.');
+  }
+  const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true,
+  }).select('-password');
 
-//   const profile = await Customer.findOne({ user: isUserExists._id });
-
-//   return {
-//     ...isUserExists.toObject(),
-//     profile: profile || null,
-//   };
-// };
-
-// const updateProfile = async (
-//   payload: Partial<ICustomer>,
-//   file: IImageFile,
-//   authUser: IJwtPayload,
-// ) => {
-//   const isUserExists = await User.findById(authUser.userId);
-
-//   if (!isUserExists) {
-//     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
-//   }
-//   if (!isUserExists.isActive) {
-//     throw new AppError(StatusCodes.BAD_REQUEST, 'User is not active!');
-//   }
-
-//   if (file && file.path) {
-//     payload.photo = file.path;
-//   }
-
-//   const result = await Customer.findOneAndUpdate(
-//     { user: authUser.userId },
-//     payload,
-//     {
-//       new: true,
-//     },
-//   ).populate('user');
-
-//   return result;
-// };
-
-// const updateUserStatus = async (userId: string) => {
-//   const user = await User.findById(userId);
-
-//   console.log('comes here');
-//   if (!user) {
-//     throw new AppError(StatusCodes.NOT_FOUND, 'User is not found');
-//   }
-
-//   user.isActive = !user.isActive;
-//   const updatedUser = await user.save();
-//   return updatedUser;
-// };
+  return updatedUser;
+};
 
 export const UserServices = {
   registerUser,
   getAllUser,
   getUserById,
-  // myProfile,
-  // updateUserStatus,
-  // updateProfile,
+  updateUserProfileIntoDB,
 };

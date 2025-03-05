@@ -36,20 +36,19 @@ const myProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const updateProfile = catchAsync(async (req, res) => {
-//   const result = await UserServices.updateProfile(
-//     req.body,
-//     req.file as IImageFile,
-//     req.user as IJwtPayload,
-//   );
-
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: `Profile updated successfully`,
-//     data: result,
-//   });
-// });
+const updateUserInfo = catchAsync(async (req: Request, res: Response) => {
+  const updatedUser = await UserServices.updateUserProfileIntoDB(
+    req.params.id,
+    req.body,
+    req.user,
+  );
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User Profile Updated successfully.',
+    data: updatedUser,
+  });
+});
 
 // const updateUserStatus = catchAsync(async (req, res) => {
 //   const userId = req.params.id;
@@ -67,6 +66,7 @@ export const UserController = {
   registerUser,
   getAllUser,
   myProfile,
+  updateUserInfo,
   // myProfile,
   // updateUserStatus,
   // updateProfile,

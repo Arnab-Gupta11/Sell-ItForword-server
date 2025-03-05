@@ -13,7 +13,7 @@ router.post(
 );
 router.get('/:id', auth('user'), UserController.myProfile);
 router.get('/', UserController.getAllUser);
-// router.put('/:id', auth('admin', 'user'), UserController.updateUserInfo);
+router.put('/:id', auth('user'), UserController.updateUserInfo);
 // router.put('/userStatus/:id', auth('admin'), UserController.updateUserInfo);
 
 export const UserRoutes = router;
