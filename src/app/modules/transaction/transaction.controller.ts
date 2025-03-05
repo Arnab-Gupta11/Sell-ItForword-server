@@ -45,6 +45,19 @@ const getPaurchaseHistory = catchAsync(async (req: Request, res: Response) => {
     data: purchaseHistory,
   });
 });
+const updateTransactionStatus = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const status = await TransactionService.updateTransactionStatusIntoDB(id);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message:
+        '🎉 Transaction completed successfully! The status has been updated, and the process is now finalized.',
+      data: status,
+    });
+  },
+);
 const getSalesHistory = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.params;
   const salesHistory = await TransactionService.salesHistoryOfAuserFromDB(
@@ -65,4 +78,5 @@ export const TransactionController = {
   getPaymentDetails,
   getPaurchaseHistory,
   getSalesHistory,
+  updateTransactionStatus,
 };

@@ -173,9 +173,19 @@ const salesHistoryOfAuserFromDB = async (
   };
 };
 
+const updateTransactionStatusIntoDB = async (id: string) => {
+  const result = await Transaction.findByIdAndUpdate(
+    id,
+    { status: 'completed' },
+    { new: true, runValidators: true },
+  );
+  return result;
+};
+
 export const TransactionService = {
   createCheckoutSession,
   getPaymentDetails,
   purchaseHistoryOfAuserFromDB,
   salesHistoryOfAuserFromDB,
+  updateTransactionStatusIntoDB,
 };
