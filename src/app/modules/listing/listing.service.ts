@@ -124,7 +124,7 @@ const markAsSoldIntoDB = async (id: string, user: IUser) => {
   if (!listing) {
     throw new AppError(404, 'Listing not found');
   }
-  if (listing.userId.toString() !== user?._id)
+  if (listing.userId.toString() !== user._id.toString())
     throw new AppError(403, 'You are not authorized to update status');
 
   listing.status = 'sold';

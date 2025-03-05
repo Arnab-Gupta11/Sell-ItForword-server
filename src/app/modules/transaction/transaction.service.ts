@@ -6,27 +6,38 @@ import { config } from '../../config';
 import { IUser } from '../user/user.interface';
 import Listing from '../listing/listing.model';
 import AppError from '../../errors/AppError';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const stripe = new Stripe(config.stripe_secret_key as string);
 
 // Create Stripe Checkout Session
-export const createCheckoutSession = async (listingId: string, user: IUser) => {
+const createCheckoutSession = async (listingId: string, user: IUser) => {
   const listingInfo = await Listing.findById(listingId);
 
   if (!listingInfo) {
-    throw new AppError(404, 'Product is not found');
+    throw new AppError(
+      404,
+      'The product you are trying to purchase does not exist.',
+    );
   }
   const ownProduct = await Listing.findOne({
     userId: user._id,
     _id: listingId,
   });
   if (ownProduct) {
-    throw new AppError(403, 'You cannot buy your own product.');
+    throw new AppError(403, 'You cannot purchase your own product.');
   }
   if (listingInfo.status === 'sold') {
-    throw new AppError(404, 'Product is already sold.');
+    throw new AppError(400, 'This product has already been sold.');
   }
 
+  const isPaymentComplete = await Transaction.findOne({ listingID: listingId });
+  if (isPaymentComplete?.paymentStatus === 'completed') {
+    throw new AppError(
+      409,
+      'A payment for this listing is currently being processed. Please wait or explore other available listings.',
+    );
+  }
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [
@@ -44,7 +55,7 @@ export const createCheckoutSession = async (listingId: string, user: IUser) => {
     ],
     mode: 'payment',
     success_url: `${config.frontend_url}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${config.frontend_url}/cancel`,
+    cancel_url: `${config.frontend_url}/payment/cancel`,
     metadata: {
       buyerId: user._id.toString(), // ✅ Convert ObjectId to string
       sellerId: listingInfo.userId.toString(), // ✅ Convert ObjectId to string
@@ -59,7 +70,7 @@ export const createCheckoutSession = async (listingId: string, user: IUser) => {
 };
 
 // Retrieve Payment Details & Save Transaction
-export const getPaymentDetails = async (session_id: string) => {
+const getPaymentDetails = async (session_id: string) => {
   if (!session_id) {
     throw new AppError(400, 'Session ID is required.');
   }
@@ -110,7 +121,61 @@ export const getPaymentDetails = async (session_id: string) => {
   };
 };
 
+const purchaseHistoryOfAuserFromDB = async (
+  userId: string,
+  user: IUser,
+  query: Record<string, unknown>,
+) => {
+  // Check if the requesting user is the same as the userId being queried
+  if (user._id.toString() !== userId) {
+    throw new AppError(403, 'Unauthorized access.');
+  }
+
+  const purchaseHistoryQuery = new QueryBuilder(
+    Transaction.find({ buyerID: userId })
+      .populate('listingID')
+      .populate('buyerID')
+      .populate('sellerID'),
+    query,
+  ).paginate();
+
+  const result = await purchaseHistoryQuery.modelQuery;
+  const meta = await purchaseHistoryQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
+const salesHistoryOfAuserFromDB = async (
+  userId: string,
+  user: IUser,
+  query: Record<string, unknown>,
+) => {
+  // Check if the requesting user is the same as the userId being queried
+  if (user._id.toString() !== userId) {
+    throw new AppError(403, 'Unauthorized access.');
+  }
+  const salesHistoryQuery = new QueryBuilder(
+    Transaction.find({ sellerID: userId })
+      .populate('listingID')
+      .populate('buyerID')
+      .populate('sellerID'),
+    query,
+  ).paginate();
+
+  const result = await salesHistoryQuery.modelQuery;
+  const meta = await salesHistoryQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
+
 export const TransactionService = {
   createCheckoutSession,
   getPaymentDetails,
+  purchaseHistoryOfAuserFromDB,
+  salesHistoryOfAuserFromDB,
 };
