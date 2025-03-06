@@ -50,24 +50,22 @@ const updateUserInfo = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const updateUserStatus = catchAsync(async (req, res) => {
-//   const userId = req.params.id;
-//   const result = await UserServices.updateUserStatus(userId);
+const updateUserStatus = catchAsync(async (req, res) => {
+  const userId = req.params.id;
+  const result = await UserServices.updateUserStatusIntoDB(userId);
 
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: `User is now ${result.isActive ? 'active' : 'inactive'}`,
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: `User is now ${result?.isBlocked ? 'Banned' : 'Active'}`,
+    data: result,
+  });
+});
 
 export const UserController = {
   registerUser,
   getAllUser,
   myProfile,
   updateUserInfo,
-  // myProfile,
-  // updateUserStatus,
-  // updateProfile,
+  updateUserStatus,
 };

@@ -21,5 +21,6 @@ router.get(
 router.get('/user/:id', auth('user'), listingControllers.getAllListingsOfAUser);
 router.delete('/:listingId', auth('user'), listingControllers.deleteListing);
 router.put('/:listingId', auth('user'), listingControllers.updateListing);
+router.put('/status/:listingId', auth('user'), listingControllers.markAsSold);
 
 export const ListingRoutes = router;

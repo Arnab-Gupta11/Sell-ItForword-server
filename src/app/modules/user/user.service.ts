@@ -63,7 +63,7 @@ const registerUser = async (payload: userDataPayload) => {
 };
 
 const getAllUser = async (query: Record<string, unknown>) => {
-  const UserQuery = new QueryBuilder(User.find(), query)
+  const UserQuery = new QueryBuilder(User.find({ role: 'user' }), query)
     .search(UserSearchableFields)
     .paginate();
 
@@ -105,10 +105,33 @@ const updateUserProfileIntoDB = async (
 
   return updatedUser;
 };
+const updateUserStatusIntoDB = async (userId: string) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  let updatedStatus;
+  if (user.isBlocked) {
+    updatedStatus = false;
+  } else {
+    updatedStatus = true;
+  }
+  const updatedUserStatus = await User.findByIdAndUpdate(
+    userId,
+    { isBlocked: updatedStatus },
+    {
+      new: true,
+      runValidators: true,
+    },
+  ).select('-password');
+
+  return updatedUserStatus;
+};
 
 export const UserServices = {
   registerUser,
   getAllUser,
   getUserById,
   updateUserProfileIntoDB,
+  updateUserStatusIntoDB,
 };

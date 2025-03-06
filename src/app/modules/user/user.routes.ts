@@ -12,8 +12,8 @@ router.post(
   UserController.registerUser,
 );
 router.get('/:id', auth('user'), UserController.myProfile);
-router.get('/', UserController.getAllUser);
+router.get('/', auth('admin'), UserController.getAllUser);
 router.put('/:id', auth('user'), UserController.updateUserInfo);
-// router.put('/userStatus/:id', auth('admin'), UserController.updateUserInfo);
+router.put('/userStatus/:id', auth('admin'), UserController.updateUserStatus);
 
 export const UserRoutes = router;
