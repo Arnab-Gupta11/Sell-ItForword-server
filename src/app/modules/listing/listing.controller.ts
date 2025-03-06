@@ -135,5 +135,5 @@ export const listingControllers = {
   deleteListing,
   markAsSold,
   getAllListingsByCategory,
-  updateListing
+  updateListing,
 };

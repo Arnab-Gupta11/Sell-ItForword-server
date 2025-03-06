@@ -107,10 +107,18 @@ const updateListingIntoDB = async (id: string, updates: object) => {
 };
 //Delete listing from database.
 const deleteListingFromDB = async (id: string, user: IUser) => {
-  const listing = await Listing.findOne({
-    userId: user._id,
-    _id: id,
-  });
+  let listing;
+  if (user.role === 'admin') {
+    listing = await Listing.findOne({
+      _id: id,
+    });
+  } else {
+    listing = await Listing.findOne({
+      userId: user._id,
+      _id: id,
+    });
+  }
+
   if (!listing) {
     throw new AppError(404, 'Listing Not Found');
   }

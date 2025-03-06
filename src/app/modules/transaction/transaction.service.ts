@@ -135,7 +135,8 @@ const purchaseHistoryOfAuserFromDB = async (
     Transaction.find({ buyerID: userId })
       .populate('listingID')
       .populate('buyerID')
-      .populate('sellerID'),
+      .populate('sellerID')
+      .sort({ createdAt: -1 }), // Sorting from newest to oldest
     query,
   ).paginate();
 
@@ -147,6 +148,7 @@ const purchaseHistoryOfAuserFromDB = async (
     result,
   };
 };
+
 const salesHistoryOfAuserFromDB = async (
   userId: string,
   user: IUser,
@@ -160,7 +162,8 @@ const salesHistoryOfAuserFromDB = async (
     Transaction.find({ sellerID: userId })
       .populate('listingID')
       .populate('buyerID')
-      .populate('sellerID'),
+      .populate('sellerID')
+      .sort({ createdAt: -1 }),
     query,
   ).paginate();
 
