@@ -37,7 +37,7 @@ const loginUser = async (payload: IAuth) => {
     }
 
     const jwtPayload: IJwtPayload = {
-      userId: user._id as string,
+      userId: user._id.toString() as string,
       fullName: user.fullName as string,
       email: user.email as string,
       profileImg: user.image,
@@ -88,7 +88,7 @@ const refreshToken = async (token: string) => {
   }
 
   const jwtPayload: IJwtPayload = {
-    userId: user._id as string,
+    userId: user._id.toString() as string,
     fullName: user.fullName as string,
     email: user.email as string,
     profileImg: user.image,
