@@ -1,11 +1,10 @@
-import express from 'express';
+import { Router } from 'express';
 import { MessageControllers } from './message.controller';
 import auth from '../../middlewares/auth';
 
-const router = express.Router();
+const router = Router();
 
-router.post('/', MessageControllers.createMessage);
-router.get('/', auth('admin'), MessageControllers.getAllMessages);
-router.get('/:id', MessageControllers.getSingleMessage);
+// Define routes
+router.post('/:receiverId', auth('user'), MessageControllers.sendMessage);
 
 export const MessageRoutes = router;

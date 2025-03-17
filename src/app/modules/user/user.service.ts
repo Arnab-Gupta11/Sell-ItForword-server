@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { IUser, userDataPayload } from './user.interface';
 import User from './user.model';
 import AppError from '../../errors/AppError';
@@ -22,44 +21,29 @@ const registerUser = async (payload: userDataPayload) => {
       'Passwords do not match. Please ensure both password fields are identical.',
     );
   }
-  const session = await mongoose.startSession();
 
-  try {
-    session.startTransaction();
-
-    // Check if the user already exists by email
-    const existingUser = await User.findOne({ email: payload.email }).session(
-      session,
+  // Check if the user already exists by email
+  const existingUser = await User.findOne({ email: payload.email });
+  if (existingUser) {
+    throw new AppError(
+      406,
+      'A user with this email already exists. Please try logging in or use a different email.',
     );
-    if (existingUser) {
-      throw new AppError(
-        406,
-        'A user with this email already exists. Please try logging in or use a different email.',
-      );
-    }
-
-    //New user Data.
-    const userData = {
-      fullName,
-      email,
-      password,
-      image: `https://avatar.iran.liara.run/username?username=${fullName}&bold=false&length=1`,
-    };
-
-    // Create the user
-    const user = new User(userData);
-    const createdUser = await user.save({ session });
-
-    await session.commitTransaction();
-    return createdUser;
-  } catch (error) {
-    if (session.inTransaction()) {
-      await session.abortTransaction();
-    }
-    throw error;
-  } finally {
-    session.endSession();
   }
+
+  //New user Data.
+  const userData = {
+    fullName,
+    email,
+    password,
+    image: `https://avatar.iran.liara.run/username?username=${fullName}&bold=false&length=1`,
+  };
+
+  // Create the user
+  const user = new User(userData);
+  const createdUser = await user.save();
+
+  return createdUser;
 };
 
 const getAllUser = async (query: Record<string, unknown>) => {

@@ -17,7 +17,10 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-export interface userDataPayload extends IUser {
+export interface userDataPayload {
+  fullName: string;
+  email: string;
+  password: string;
   confirmedPassword: string;
 }
 export interface UserModel extends Model<IUser> {

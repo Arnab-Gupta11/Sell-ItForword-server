@@ -1,14 +1,18 @@
-import { model, Schema } from 'mongoose';
-import { TMessage } from './message.interface';
+import { Schema, model } from 'mongoose';
+import { IMessage } from './message.interface';
 
-const MessageSchema = new Schema<TMessage>(
-  {
-    name: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    message: { type: String, required: true },
+const messageSchema = new Schema<IMessage>({
+  conversationId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Conversation',
+    required: true,
   },
-  { timestamps: true },
-);
+  senderId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  receiverId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  text: { type: String, default: null },
+  image: { type: String, default: null },
+});
 
-export const Message = model<TMessage>('Message', MessageSchema);
+const Message = model<IMessage>('Message', messageSchema);
+
+export default Message;
