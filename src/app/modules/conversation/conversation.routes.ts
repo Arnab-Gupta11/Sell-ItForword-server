@@ -1,9 +1,14 @@
 import { Router } from 'express';
-import { conversationController } from './conversation.controller';
+import { ConversationControllers } from './conversation.controller';
+import auth from '../../middlewares/auth';
 
 const router = Router();
 
 // Define routes
-router.get('/', conversationController.getAll);
+router.get(
+  '/',
+  auth('user'),
+  ConversationControllers.getAllConversationOfAUser,
+);
 
 export default router;

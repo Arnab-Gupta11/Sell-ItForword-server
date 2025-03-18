@@ -1,9 +1,21 @@
 import { Request, Response } from 'express';
-import { conversationService } from './conversation.service';
+import { ConversationServices } from './conversation.service';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
 
-export const conversationController = {
-  async getAll(req: Request, res: Response) {
-    const data = await conversationService.getAll();
-    res.json(data);
+const getAllConversationOfAUser = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await ConversationServices.getAllConversationOfAUserFromDB(
+      req.user,
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'All conversation retrived successfully.',
+      data: result,
+    });
   },
+);
+export const ConversationControllers = {
+  getAllConversationOfAUser,
 };
