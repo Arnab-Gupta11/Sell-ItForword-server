@@ -11,4 +11,4 @@ router.get(
   ConversationControllers.getAllConversationOfAUser,
 );
 
-export default router;
+export const ConversationRoutes = router;

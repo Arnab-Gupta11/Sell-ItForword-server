@@ -4,7 +4,8 @@ import Conversation from './conversation.model';
 const getAllConversationOfAUserFromDB = async (user: IUser) => {
   const conversations = await Conversation.find({
     participants: { $in: [user._id] },
-  }).populate('participants');
+  }).populate({ path: 'participants', select: '_id fullName email image' });
+
   return conversations;
 };
 
