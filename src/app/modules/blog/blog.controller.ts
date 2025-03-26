@@ -16,12 +16,14 @@ const createBlog = catchAsync(async (req: Request, res: Response) => {
 
 //Get all blogs
 const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
+  console.log(req.query);
   const result = await BlogServices.getAllBlogsFromDB(req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: 'Blogs fetched successfully',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 // Get a single project

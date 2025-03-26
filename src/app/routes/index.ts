@@ -7,6 +7,7 @@ import { WishlistRoutes } from '../modules/wishlist/wishlist.routes';
 import { ContactRoutes } from '../modules/contact/contact.routes';
 import { MessageRoutes } from '../modules/message/message.routes';
 import { ConversationRoutes } from '../modules/conversation/conversation.routes';
+import { BlogRoutes } from '../modules/blog/blog.routes';
 
 const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: '/conversation',
     route: ConversationRoutes,
+  },
+  {
+    path: '/blogs',
+    route: BlogRoutes,
   },
 ];
 

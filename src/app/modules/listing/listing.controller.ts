@@ -37,6 +37,7 @@ const getSingleListinng = catchAsync(async (req: Request, res: Response) => {
 
 //get all listing.
 const getAllListings = catchAsync(async (req: Request, res: Response) => {
+  console.log(req.query);
   const result = await listingServices.getAllListingFromDB(req.query);
   if (result) {
     sendResponse(res, {

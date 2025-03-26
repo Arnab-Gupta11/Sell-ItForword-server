@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { TBlog } from './blog.interface';
+import { IBlog } from './blog.interface';
 
-const blogSchema = new Schema<TBlog>(
+const blogSchema = new Schema<IBlog>(
   {
     title: {
       type: String,
@@ -19,8 +19,11 @@ const blogSchema = new Schema<TBlog>(
       type: String,
       required: true,
     },
-
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true, versionKey: false },
 );
-export const Blog = model<TBlog>('Blog', blogSchema);
+export const Blog = model<IBlog>('Blog', blogSchema);

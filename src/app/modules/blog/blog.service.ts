@@ -1,10 +1,11 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { searchableFields } from './blog.constant';
-import { TBlog } from './blog.interface';
+import AppError from '../../errors/AppError';
+import { blogSearchableFields } from './blog.constant';
+import { IBlog } from './blog.interface';
 import { Blog } from './blog.model';
 
 //Create a blog into DB
-const createBlogIntoDB = async (payload: TBlog) => {
+const createBlogIntoDB = async (payload: IBlog) => {
   const result = await Blog.create(payload);
   return result;
 };
@@ -12,12 +13,17 @@ const createBlogIntoDB = async (payload: TBlog) => {
 //Get All blog from DB
 const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
   const blogQuery = new QueryBuilder(Blog.find(), query)
-    .search(searchableFields)
+    .search(blogSearchableFields)
     .filter()
     .sort()
-    .sortOrder();
+    .sortOrder()
+    .paginate();
   const result = await blogQuery.modelQuery;
-  return result;
+  const meta = await blogQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
 };
 
 const getSingleBlogFromDB = async (id: string) => {
@@ -26,7 +32,7 @@ const getSingleBlogFromDB = async (id: string) => {
 };
 
 //Update a blog into DB
-const updateBlogIntoDB = async (id: string, payload: Partial<TBlog>) => {
+const updateBlogIntoDB = async (id: string, payload: Partial<IBlog>) => {
   //Update blog.
   const result = await Blog.findByIdAndUpdate(id, payload, {
     new: true,
@@ -41,10 +47,45 @@ const deleteBlogFromDB = async (id: string) => {
   const result = await Blog.findByIdAndDelete(id);
   return result;
 };
+
+// Get all Featured blog from DB
+const getAllFeaturedProjectFromDB = async () => {
+  const featuredBlog = await Blog.find({ isFeatured: true }).limit(5);
+  let allBlogs: IBlog[] = [];
+  if (featuredBlog.length < 5) {
+    allBlogs = await Blog.find()
+      .sort({ createdAt: -1 })
+      .limit(5 - featuredBlog.length);
+  }
+  const result = [...featuredBlog, ...allBlogs];
+  return result;
+};
+
+//Update Blog status
+const updateBlogStatusIntoDB = async (id: string) => {
+  // Find the project first
+  const project = await Blog.findById(id);
+
+  if (!project) {
+    throw new AppError(404, 'Blog not found');
+  }
+
+  // Toggle the `isFeatured` value
+  const updatedProject = await Blog.findByIdAndUpdate(
+    id,
+    { $set: { isFeatured: !project.isFeatured } }, // Properly toggles the boolean value
+    { new: true, runValidators: true },
+  );
+
+  return updatedProject;
+};
+
 export const BlogServices = {
   createBlogIntoDB,
   getAllBlogsFromDB,
   getSingleBlogFromDB,
   updateBlogIntoDB,
   deleteBlogFromDB,
+  getAllFeaturedProjectFromDB,
+  updateBlogStatusIntoDB,
 };

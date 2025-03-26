@@ -36,6 +36,7 @@ class QueryBuilder<T> {
       'maxPrice',
     ];
     excludeFields.forEach((el) => delete queryObj[el]);
+    console.log('Inside Query==> ', queryObj);
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
     return this;
   }
