@@ -10,7 +10,12 @@ const createCategory = async (categoryData: Partial<ICategory>) => {
 
   return result;
 };
+const getAllCategories = async () => {
+  const result = await Category.find({isActive:true}).sort({ createdAt: -1 });
+  return result;
+};
 
 export const CategoryServices = {
   createCategory,
+  getAllCategories,
 };
