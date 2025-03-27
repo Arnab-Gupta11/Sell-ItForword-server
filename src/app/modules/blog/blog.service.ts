@@ -49,11 +49,11 @@ const deleteBlogFromDB = async (id: string) => {
 };
 
 // Get all Featured blog from DB
-const getAllFeaturedProjectFromDB = async () => {
+const getAllFeaturedBlogFromDB = async () => {
   const featuredBlog = await Blog.find({ isFeatured: true }).limit(5);
   let allBlogs: IBlog[] = [];
   if (featuredBlog.length < 5) {
-    allBlogs = await Blog.find()
+    allBlogs = await Blog.find({ isFeatured: false })
       .sort({ createdAt: -1 })
       .limit(5 - featuredBlog.length);
   }
@@ -86,6 +86,6 @@ export const BlogServices = {
   getSingleBlogFromDB,
   updateBlogIntoDB,
   deleteBlogFromDB,
-  getAllFeaturedProjectFromDB,
+  getAllFeaturedBlogFromDB,
   updateBlogStatusIntoDB,
 };

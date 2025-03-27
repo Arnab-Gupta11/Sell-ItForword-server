@@ -1,7 +1,7 @@
-import { Document, ObjectId } from 'mongoose';
+import { Document } from 'mongoose';
 
 export interface IBlog extends Document {
-  _id: ObjectId;
+  // _id: ObjectId;
   title: string;
   content: string;
   image: string;

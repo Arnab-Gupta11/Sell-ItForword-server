@@ -14,6 +14,7 @@ router
     BlogControllers.createBlog,
   )
   .get(BlogControllers.getAllBlogs);
+router.get('/featured', BlogControllers.getAllFeturedblogs);
 router
   .route('/:id')
   .patch(
@@ -23,4 +24,7 @@ router
   )
   .delete(auth('admin'), BlogControllers.deleteBlog)
   .get(BlogControllers.getSingleBlog);
+
+router.patch('/status/:id', auth('admin'), BlogControllers.updateBlogStatus);
+
 export const BlogRoutes = router;

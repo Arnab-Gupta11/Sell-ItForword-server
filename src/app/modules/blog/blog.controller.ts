@@ -16,7 +16,6 @@ const createBlog = catchAsync(async (req: Request, res: Response) => {
 
 //Get all blogs
 const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.query);
   const result = await BlogServices.getAllBlogsFromDB(req.query);
   sendResponse(res, {
     statusCode: 200,
@@ -65,10 +64,33 @@ const deleteBlog = catchAsync(async (req: Request, res: Response) => {
   }
 });
 
+const getAllFeturedblogs = catchAsync(async (req: Request, res: Response) => {
+  const result = await BlogServices.getAllFeaturedBlogFromDB();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Featured Blogs fetched successfully',
+    data: result,
+  });
+});
+// Update a project
+const updateBlogStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await BlogServices.updateBlogStatusIntoDB(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Blog Status Updated',
+    data: result,
+  });
+});
+
 export const BlogControllers = {
   createBlog,
   getAllBlogs,
   updateBlog,
   deleteBlog,
   getSingleBlog,
+  getAllFeturedblogs,
+  updateBlogStatus,
 };
