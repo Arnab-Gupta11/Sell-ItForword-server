@@ -15,7 +15,7 @@ router.post(
 router.get('/', listingControllers.getAllListings);
 router.get('/:listingId', listingControllers.getSingleListinng);
 router.get(
-  '/categories/:category',
+  '/categories/:categoryId',
   listingControllers.getAllListingsByCategory,
 );
 router.get('/user/:id', auth('user'), listingControllers.getAllListingsOfAUser);

@@ -1,4 +1,4 @@
-export const listingSearchableFields = ['title', 'category'];
+export const listingSearchableFields = ['title'];
 export const bangladeshiCities = [
   'Dhaka',
   'Chittagong',

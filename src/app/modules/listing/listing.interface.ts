@@ -6,9 +6,10 @@ export interface IListing extends Document {
   price: number;
   condition: 'new' | 'used';
   image: string;
-  category: string;
+  category: Schema.Types.ObjectId;
   userId: Schema.Types.ObjectId;
   status: 'available' | 'sold';
+  isActive:boolean;
   address: string;
   city: string;
   phone: string;

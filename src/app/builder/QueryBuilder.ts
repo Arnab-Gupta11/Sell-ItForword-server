@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FilterQuery, Query } from 'mongoose';
 
 class QueryBuilder<T> {
@@ -36,9 +37,24 @@ class QueryBuilder<T> {
       'maxPrice',
     ];
     excludeFields.forEach((el) => delete queryObj[el]);
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+
+    const filterQuery: Record<string, any> = {}; // Use Record<string, any> to avoid type errors
+
+    // Convert filters properly
+    Object.keys(queryObj).forEach((key) => {
+      if (Array.isArray(queryObj[key])) {
+        // If the field is an array (e.g., category), use $in
+        filterQuery[key] = { $in: queryObj[key] };
+      } else {
+        // Otherwise, use an exact match
+        filterQuery[key] = queryObj[key];
+      }
+    });
+
+    this.modelQuery = this.modelQuery.find(filterQuery as FilterQuery<T>);
     return this;
   }
+
   //Sorting
   sort() {
     const sort =

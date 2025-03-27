@@ -4,6 +4,7 @@ import { IUser } from '../user/user.interface';
 import { IListing } from './listing.interface';
 import { listingSearchableFields } from './listing.constant';
 import AppError from '../../errors/AppError';
+import { ICategory } from '../category/category.interface';
 
 //Save product into database.
 const createListingIntoDB = async (
@@ -15,6 +16,7 @@ const createListingIntoDB = async (
   const result = await Listing.create(newListingData);
   return result;
 };
+
 //Get all product from database.
 const getAllListingFromDB = async (query: Record<string, unknown>) => {
   const maxPriceData = await Listing.findOne()
@@ -22,7 +24,7 @@ const getAllListingFromDB = async (query: Record<string, unknown>) => {
     .select('price')
     .exec();
   const maxListingPrice = maxPriceData?.price || 0;
-  const listingQuery = new QueryBuilder(Listing.find(), query)
+  const listingQuery = new QueryBuilder(Listing.find({ isActive: true }), query)
     .search(listingSearchableFields)
     .filter()
     .filterByPrice(maxListingPrice)
@@ -47,7 +49,13 @@ const getAllListingOfAUserFromDB = async (
     .select('price')
     .exec();
   const maxListingPrice = maxPriceData?.price || 0;
-  const listingQuery = new QueryBuilder(Listing.find({ userId: id }), query)
+  const listingQuery = new QueryBuilder(
+    Listing.find({ userId: id, isActive: true }).populate(
+      'category',
+      '_id name isActive ',
+    ),
+    query,
+  )
     .search(listingSearchableFields)
     .filter()
     .filterByPrice(maxListingPrice)
@@ -64,7 +72,7 @@ const getAllListingOfAUserFromDB = async (
   };
 };
 const getAllListingByCategory = async (
-  category: string,
+  categoryId: string,
   query: Record<string, unknown>,
 ) => {
   const maxPriceData = await Listing.findOne()
@@ -72,7 +80,10 @@ const getAllListingByCategory = async (
     .select('price')
     .exec();
   const maxListingPrice = maxPriceData?.price || 0;
-  const listingQuery = new QueryBuilder(Listing.find({ category }), query)
+  const listingQuery = new QueryBuilder(
+    Listing.find({ category: categoryId, isActive: true }),
+    query,
+  )
     .search(listingSearchableFields)
     .filter()
     .filterByPrice(maxListingPrice)
@@ -88,16 +99,33 @@ const getAllListingByCategory = async (
     result,
   };
 };
+
 //Get single product from database.
 const getSingleListingFromDB = async (id: string) => {
-  const result = await Listing.findById(id).populate('userId');
+  const result = await Listing.findById(id)
+    .populate('userId', '-createdAt -updatedAt -isBlocked')
+    .populate('category', '_id name isActive ');
   if (!result) {
     throw new AppError(404, 'Listing Item not found');
   }
   return result;
 };
 //Update listing into database.
-const updateListingIntoDB = async (id: string, updates: object) => {
+const updateListingIntoDB = async (
+  id: string,
+  updates: Partial<ICategory>,
+  user: IUser,
+) => {
+  const listing = await Listing.findOne({
+    _id: id,
+    userId: user._id,
+    isActive: true,
+  });
+  if (!listing) {
+    throw new AppError(404, 'Listing Not Found');
+  }
+  if (listing.userId.toString() !== user._id.toString())
+    throw new AppError(403, 'You are not authorized to update this listings');
   const result = await Listing.findByIdAndUpdate(
     id,
     { ...updates },
@@ -122,7 +150,11 @@ const deleteListingFromDB = async (id: string, user: IUser) => {
   if (!listing) {
     throw new AppError(404, 'Listing Not Found');
   }
-  const result = await Listing.findByIdAndDelete(id);
+  const result = await Listing.findByIdAndUpdate(
+    id,
+    { isActive: false },
+    { new: true, runValidators: true },
+  );
   return result;
 };
 

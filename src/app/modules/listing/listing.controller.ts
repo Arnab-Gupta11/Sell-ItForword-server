@@ -37,7 +37,6 @@ const getSingleListinng = catchAsync(async (req: Request, res: Response) => {
 
 //get all listing.
 const getAllListings = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.query);
   const result = await listingServices.getAllListingFromDB(req.query);
   if (result) {
     sendResponse(res, {
@@ -51,9 +50,9 @@ const getAllListings = catchAsync(async (req: Request, res: Response) => {
 });
 const getAllListingsByCategory = catchAsync(
   async (req: Request, res: Response) => {
-    const { category } = req.params;
+    const { categoryId } = req.params;
     const result = await listingServices.getAllListingByCategory(
-      category,
+      categoryId,
       req.query,
     );
     if (result) {
@@ -90,7 +89,11 @@ const getAllListingsOfAUser = catchAsync(
 const updateListing = catchAsync(async (req: Request, res: Response) => {
   const updates = req.body;
   const { listingId } = req.params;
-  const result = await listingServices.updateListingIntoDB(listingId, updates);
+  const result = await listingServices.updateListingIntoDB(
+    listingId,
+    updates,
+    req.user,
+  );
   if (result) {
     sendResponse(res, {
       success: true,
