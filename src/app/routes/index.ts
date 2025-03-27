@@ -8,6 +8,7 @@ import { ContactRoutes } from '../modules/contact/contact.routes';
 import { MessageRoutes } from '../modules/message/message.routes';
 import { ConversationRoutes } from '../modules/conversation/conversation.routes';
 import { BlogRoutes } from '../modules/blog/blog.routes';
+import { CategoryRoutes } from '../modules/category/category.routes';
 
 const router = Router();
 
@@ -23,6 +24,10 @@ const moduleRoutes = [
   {
     path: '/listings',
     route: ListingRoutes,
+  },
+  {
+    path: '/category',
+    route: CategoryRoutes,
   },
   {
     path: '/transactions',

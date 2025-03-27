@@ -1,9 +1,19 @@
 import { Request, Response } from 'express';
-import { categoryService } from './category.service';
+import { CategoryServices } from './category.service';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
 
-export const categoryController = {
-  async getAll(req: Request, res: Response) {
-    const data = await categoryService.getAll();
-    res.json(data);
-  },
+const createCategory = catchAsync(async (req: Request, res: Response) => {
+  const result = await CategoryServices.createCategory(req.body);
+
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: 'Category created succesfully',
+    data: result,
+  });
+});
+
+export const CategoryControllers = {
+  createCategory,
 };

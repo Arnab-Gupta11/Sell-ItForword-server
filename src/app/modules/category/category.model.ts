@@ -37,14 +37,13 @@ const categorySchema = new Schema<ICategoryDocument>(
   },
 );
 
+//Generating Slug
 categorySchema.pre<ICategory>('validate', function (next) {
-  if (this instanceof Document) {
-    if (this.isModified('name') && !this.slug) {
-      this.slug = this.name
-        .toLowerCase()
-        .replace(/ /g, '-')
-        .replace(/[^\w-]+/g, '');
-    }
+  if (this.isModified('name')) {
+    this.slug = this.name
+      .toLocaleLowerCase()
+      .replace(/ /g, '-') //Replaces all spaces with -
+      .replace(/[^\w-]+/g, ''); //Removes all characters that are not letters, numbers, underscores (_), or hyphens (-).
   }
   next();
 });
