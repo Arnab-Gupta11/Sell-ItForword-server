@@ -133,7 +133,12 @@ const purchaseHistoryOfAuserFromDB = async (
 
   const purchaseHistoryQuery = new QueryBuilder(
     Transaction.find({ buyerID: userId })
-      .populate('listingID')
+      .populate({
+        path: 'listingID',
+        populate: {
+          path: 'category', // Populate category inside listingID
+        },
+      })
       .populate('buyerID')
       .populate('sellerID')
       .sort({ createdAt: -1 }), // Sorting from newest to oldest
@@ -160,7 +165,12 @@ const salesHistoryOfAuserFromDB = async (
   }
   const salesHistoryQuery = new QueryBuilder(
     Transaction.find({ sellerID: userId })
-      .populate('listingID')
+      .populate({
+        path: 'listingID',
+        populate: {
+          path: 'category', // Populate category inside listingID
+        },
+      })
       .populate('buyerID')
       .populate('sellerID')
       .sort({ createdAt: -1 }),
